@@ -1,8 +1,8 @@
 from datetime import datetime, date
-from myparser import parser
+import myparser as p
 import time
 
-'python -m auto_py_to_exe'
+
 
 Name = '0'
 Number_Assets = '0'
@@ -36,7 +36,7 @@ if Number == '1':
     if value_in == value_of:
         print(value)
     elif value_of == 'USD' and value_in == 'EUR':
-        mas = parser(currency['USD/EUR'])
+        mas = p.parser(currency['USD/EUR'])
         print(value * float(mas[1]))
     elif value_of == 'EUR' and value_in == 'USD':
         mas = parser(currency['EUR/USD'])
@@ -66,7 +66,7 @@ elif Number == '2':
         link = str(input('Введите ссылку нового актива: '))
         Number_Assets = str(input('Введите количество купленных акций: '))
         Number_price = str(input('Введите стоимость за акцию: '))
-        pars = parser(link)
+        pars = p.parser(link)
         with open('Assets.txt', 'a') as Assets:
             Assets.write('\n' + pars['name'] + '|' + Number_Assets + '|' + Number_price + '|' + link)
 
@@ -86,7 +86,7 @@ elif Number == '2':
                 if Number_ch == Number:
                     vr = line.split('|')
                     break
-        pars = parser(vr[3])
+        pars = p.parser(vr[3])
         prise_shares = float(vr[1]) * float(vr[2])
         current_price = float(vr[1]) * float(pars['prise'])
         print('-----\n'
