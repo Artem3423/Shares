@@ -1,12 +1,97 @@
 from datetime import datetime, date
-from myparser import parser
 import time
+import requests
+from bs4 import BeautifulSoup
+import os
+import os.path
 
-'python -m auto_py_to_exe'
+current_date = date.today()
+HEADERS = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36 Edg/88.0.705.63',
+           'accept': '*/*'}
+
+
+def get_html(url_get, params=None):
+    r = requests.get(url_get, headers=HEADERS, params=params)
+    return r
+
+
+def get_content(html):
+    soup = BeautifulSoup(html, 'html.parser')
+
+    name_shares = soup.find('h1', class_='float_lang_base_1 relativeAttr').get_text()
+    name_shares = name_shares.strip()
+
+    prise = soup.find('span', class_='arial_26').get_text()
+    prise = prise.replace(',', '.')
+
+    current_quotes = soup.find('span', class_='arial_20').get_text()
+    current_quotes = current_quotes.replace(',', '.')
+
+    current_quotes2 = soup.find('div', class_='top bold inlineblock').get_text()
+    current_quotes2 = current_quotes2[current_quotes2.index('%') - 5:current_quotes2.index('%') + 1]
+    current_quotes2 = current_quotes2.replace(',', '.')
+
+    '''
+    items = soup.find_all('a', class_='na-card-item')
+
+    cars = []
+    for item in items:
+        uah_price = item.find('span', class_='size15')
+        if uah_price:
+            uah_price = uah_price.get_text().replace(' • ', '')
+        else:
+            uah_price = 'Цену уточняйте'
+        cars.append({
+            'title': item.find('div', class_='na-card-name').get_text(strip=True),
+            'link': HOST + item.find('span', class_='link').get('href'),
+            'usd_price': item.find('strong', class_='green').get_text(),
+            'uah_price': uah_price,
+            'city': item.find('svg', class_='svg_i16_pin').find_next('span').get_text(),
+        })
+    return cars
+ '''
+    return name_shares, prise, current_quotes, current_quotes2
+
+
+'''
+def parser(url):
+    html = get_html(url)
+
+    if html.status_code == 200:
+        mas = get_content(html.text)
+        return mas
+    else:
+        print('Error')
+'''
+
+
+def parser(url_link):
+    html = get_html(url_link)
+
+    if html.status_code == 200:
+        mas_p = get_content(html.text)
+        valut = {
+            'name': mas_p[0],
+            'prise': mas_p[1],
+            'cur_quotes': mas_p[2],
+            'cur_quotes%': mas_p[3]
+        }
+        return valut
+    else:
+        print('Error')
+
 
 Name = '0'
 Number_Assets = '0'
 Number_price = '0'
+palka = chr(92)
+print(palka)
+# dir_f = os.path.abspath(os.curdir + palka)
+#dir_f = os.path.abspath(os.curdir)
+dir_f = 'D:' + palka + 'Shares'
+dir_f += palka
+
+print(dir_f)
 
 # current_quotes = soup.find('span', class_='arial_20').get_text()
 # current_quotes = soup.find('div', class_='top bold inlineblock')
@@ -19,10 +104,9 @@ currency = {
 }
 
 url = 'https://ru.investing.com/etfs/tspx'
-#for i in range(10):
+# for i in range(10):
 #    print(parser(currency['USD/RUB']))
 #    time.sleep(5)
-current_date = date.today()
 
 Number = str(input('-----\nЧто вы хотите?\n'
                    '        1. Перевод валют\n'
@@ -37,24 +121,24 @@ if Number == '1':
         print(value)
     elif value_of == 'USD' and value_in == 'EUR':
         mas = parser(currency['USD/EUR'])
-        print(value * float(mas[1]))
+        print(value * float(mas['name']))
     elif value_of == 'EUR' and value_in == 'USD':
         mas = parser(currency['EUR/USD'])
-        print(value * float(mas[1]))
+        print(value * float(mas['name']))
     elif value_of == 'RUB':
         if value_in == 'USD':
             mas = parser(currency['USD/RUB'])
-            print(value / float(mas[1]))
+            print(value / float(mas['name']))
         elif value_in == 'EUR':
             mas = parser(currency['EUR/RUB'])
-            print(value / float(mas[1]))
+            print(value / float(mas['name']))
     elif value_in == 'RUB':
         if value_of == 'USD':
             mas = parser(currency['USD/RUB'])
-            print(value * float(mas[1]))
+            print(value * float(mas['name']))
         elif value_of == 'EUR':
             mas = parser(currency['EUR/RUB'])
-            print(value * float(mas[1]))
+            print(value * float(mas['name']))
 
 elif Number == '2':
     Number = str(input('-----\nЧто вы хотите?\n'
@@ -71,9 +155,13 @@ elif Number == '2':
             Assets.write('\n' + pars['name'] + '|' + Number_Assets + '|' + Number_price + '|' + link)
 
     elif Number == '2':
+        time.sleep(3)
         # Name = str(input('Введите название актива: '))
         print('-----')
-        with open('Assets.txt', 'r') as Assets:  # Два файла отвечают за перезапись данных профилей
+        time.sleep(3)
+        with open(str(dir_f) + 'Assets.txt', 'r') as Assets:  # Два файла отвечают за перезапись данных профилей
+            print('yes')
+            time.sleep(3)
             Number_ch = 0
             for line in Assets:
                 Number_ch += 1
@@ -86,6 +174,8 @@ elif Number == '2':
                 if Number_ch == Number:
                     vr = line.split('|')
                     break
+        print('yes2')
+        time.sleep(5)
         pars = parser(vr[3])
         prise_shares = float(vr[1]) * float(vr[2])
         current_price = float(vr[1]) * float(pars['prise'])
@@ -110,7 +200,7 @@ elif Number == '2':
             Assets.write(vrem.read())
 else:
     print('-----\nНеверное число')
-current_date = date.today()
+
 
 '''
 def Save():  # Функция для сохранения игры (баланса и профиля)
@@ -161,4 +251,11 @@ rates['USD']
         rate=Decimal('65.5287'))
 
 '''
+
+# URL = 'https://ru.investing.com/etfs/tspx'
+
+
+# print(parser('https://ru.investing.com/currencies/usd-rub'))
+
+
 time.sleep(10)
