@@ -1,7 +1,8 @@
-from pycbrf import ExchangeRates
 from datetime import datetime, date
 from myparser import parser
 import time
+
+'python -m auto_py_to_exe'
 
 Name = '0'
 Number_Assets = '0'
@@ -21,7 +22,6 @@ url = 'https://ru.investing.com/etfs/tspx'
 #for i in range(10):
 #    print(parser(currency['USD/RUB']))
 #    time.sleep(5)
-rates = ExchangeRates('2016-06-26')
 current_date = date.today()
 
 Number = str(input('-----\nЧто вы хотите?\n'
@@ -33,7 +33,6 @@ if Number == '1':
     value_of = input('Введите из какой валюты хотите переводить: ')
     value_in = input('Введите в какую валюту хотите перевести: ')
     value = float(input('Введите число ' + str(value_of) + ': '))
-    rates = ExchangeRates(str(date.today()))
     if value_in == value_of:
         print(value)
     elif value_of == 'USD' and value_in == 'EUR':
@@ -112,7 +111,6 @@ elif Number == '2':
 else:
     print('-----\nНеверное число')
 current_date = date.today()
-rates = ExchangeRates(str(current_date))
 
 '''
 def Save():  # Функция для сохранения игры (баланса и профиля)
