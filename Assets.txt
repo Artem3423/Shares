@@ -1,0 +1,4 @@
+S&P500|34|0,10000
+SP500|45|0.3546
+Газпром ПАО (GAZP)|45|232|https://ru.investing.com/equities/gazprom_rts
+Газпром ПАО (GAZP)|125|235|https://ru.investing.com/equities/gazprom_rts
