@@ -1,8 +1,77 @@
 from datetime import datetime, date
-import myparser as p
 import time
+import requests
+from bs4 import BeautifulSoup
 
 
+def get_html(url_get, params=None):
+    r = requests.get(url_get, headers=HEADERS, params=params)
+    return r
+
+
+def get_content(html):
+    soup = BeautifulSoup(html, 'html.parser')
+
+    name_shares = soup.find('h1', class_='float_lang_base_1 relativeAttr').get_text()
+    name_shares = name_shares.strip()
+
+    prise = soup.find('span', class_='arial_26').get_text()
+    prise = prise.replace(',', '.')
+
+    current_quotes = soup.find('span', class_='arial_20').get_text()
+    current_quotes = current_quotes.replace(',', '.')
+
+    current_quotes2 = soup.find('div', class_='top bold inlineblock').get_text()
+    current_quotes2 = current_quotes2[current_quotes2.index('%') - 5:current_quotes2.index('%') + 1]
+    current_quotes2 = current_quotes2.replace(',', '.')
+
+    '''
+    items = soup.find_all('a', class_='na-card-item')
+
+    cars = []
+    for item in items:
+        uah_price = item.find('span', class_='size15')
+        if uah_price:
+            uah_price = uah_price.get_text().replace(' • ', '')
+        else:
+            uah_price = 'Цену уточняйте'
+        cars.append({
+            'title': item.find('div', class_='na-card-name').get_text(strip=True),
+            'link': HOST + item.find('span', class_='link').get('href'),
+            'usd_price': item.find('strong', class_='green').get_text(),
+            'uah_price': uah_price,
+            'city': item.find('svg', class_='svg_i16_pin').find_next('span').get_text(),
+        })
+    return cars
+ '''
+    return name_shares, prise, current_quotes, current_quotes2
+
+'''
+def parser(url):
+    html = get_html(url)
+
+    if html.status_code == 200:
+        mas = get_content(html.text)
+        return mas
+    else:
+        print('Error')
+'''
+
+
+def parser(url):
+    html = get_html(url)
+
+    if html.status_code == 200:
+        mas = get_content(html.text)
+        valut = {
+            'name': mas[0],
+            'prise': mas[1],
+            'cur_quotes': mas[2],
+            'cur_quotes%': mas[3]
+        }
+        return valut
+    else:
+        print('Error')
 
 Name = '0'
 Number_Assets = '0'
@@ -36,7 +105,7 @@ if Number == '1':
     if value_in == value_of:
         print(value)
     elif value_of == 'USD' and value_in == 'EUR':
-        mas = p.parser(currency['USD/EUR'])
+        mas = parser(currency['USD/EUR'])
         print(value * float(mas[1]))
     elif value_of == 'EUR' and value_in == 'USD':
         mas = parser(currency['EUR/USD'])
@@ -66,7 +135,7 @@ elif Number == '2':
         link = str(input('Введите ссылку нового актива: '))
         Number_Assets = str(input('Введите количество купленных акций: '))
         Number_price = str(input('Введите стоимость за акцию: '))
-        pars = p.parser(link)
+        pars = parser(link)
         with open('Assets.txt', 'a') as Assets:
             Assets.write('\n' + pars['name'] + '|' + Number_Assets + '|' + Number_price + '|' + link)
 
@@ -86,7 +155,7 @@ elif Number == '2':
                 if Number_ch == Number:
                     vr = line.split('|')
                     break
-        pars = p.parser(vr[3])
+        pars = parser(vr[3])
         prise_shares = float(vr[1]) * float(vr[2])
         current_price = float(vr[1]) * float(pars['prise'])
         print('-----\n'
@@ -161,4 +230,19 @@ rates['USD']
         rate=Decimal('65.5287'))
 
 '''
+
+
+
+
+#URL = 'https://ru.investing.com/etfs/tspx'
+HEADERS = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36 Edg/88.0.705.63',
+           'accept': '*/*'}
+
+
+
+
+#print(parser('https://ru.investing.com/currencies/usd-rub'))
+
+
+
 time.sleep(10)
