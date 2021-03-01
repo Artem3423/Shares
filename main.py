@@ -89,6 +89,7 @@ while Number == '':
                     print(str(Number_ch) + '.', A_list[0], '-->', A_list[1], 'акция(и)')
                 Number = str(input('-----\nВведите номер (без точки). --> '))
                 Number_ch = 0
+            with open(str(dir_f) + 'Assets.txt', 'r') as Assets:
                 for line in Assets:
                     Number_ch += 1
                     if Number_ch == Number:
