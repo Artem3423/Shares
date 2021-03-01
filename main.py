@@ -94,6 +94,7 @@ while Number == '':
                     Number_ch += 1
                     if Number_ch == Number:
                         A_list = line.split('|')
+                        A_list[3] = A_list[3].strip()
                         break
             pars = parser(A_list[3])
             prise_shares = float(A_list[1]) * float(A_list[2])
