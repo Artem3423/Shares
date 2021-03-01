@@ -31,7 +31,7 @@ currency = {
 url = 'https://ru.investing.com/etfs/tspx'
 current_date = date.today()
 Number = ''
-if Number == '':
+while Number == '':
     Number = str(input('-----\nЧто вы хотите?\n'
                        '        1. Перевод валют\n'
                        '        2. Расчёт доходности  Прочитайте -> (README and Shares)\n'
@@ -153,4 +153,4 @@ if Number == '':
     else:
         print('-----\nНеверное число')
 
-    Number = input('-----\nНажмите ENTER что бы начать заново. Или ПРОБЕЛ и ENTER что бы закрыть это окно.')
+    Number = str(input('-----\nНажмите ENTER что бы начать заново. Или ПРОБЕЛ и ENTER что бы закрыть это окно.'))
